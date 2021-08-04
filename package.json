@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "todoist": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +25,8 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
+    "esm": "^3.2.25",
+    "minimist": "^1.2.5",
     "node-fetch": "^2.6.1"
   }
 }
