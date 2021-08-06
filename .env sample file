@@ -1,0 +1,3 @@
+-->> Add Your API TOKEN and change this file to .env and push inside src folder
+
+TOKEN = "Your API TOKEN "
