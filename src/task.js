@@ -7,20 +7,11 @@ const readlineSync = require("readline-sync");
 const TOKEN = process.env.TOKEN;
 const URL = 'https://api.todoist.com/rest/v1/'
 
-
-function getProjects(){
-    fetch(URL + "projects",{
-        headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-    })
-      .then((res) => res.json())
-      .then((data) => console.table(data))
-      .catch(err => {
-          console.log("Error" , err)
-      })
+// function for passing id
+function chooseID (){
+    let chooseID = readlineSync.question("Add id : ")
+    return chooseID
 }
-
 
 function getActiveTasks() {
     let dataTable = ["id" , "project_id","content"]
@@ -32,17 +23,20 @@ function getActiveTasks() {
     .then(res => res.json())
     .then(data => console.table(data , dataTable))
     .catch(err => {
-        console.log("Error" , err)
+        console.log("Error at fetching task - please check " , err)
     })
 }
 
 
-function createTask(){
-
+function createTask(id){
+ 
     let tasktoAdd = {};
+
+    tasktoAdd.project_id=id;
     tasktoAdd.content = readlineSync.question("Content : ");
     tasktoAdd.due_string = readlineSync.question("Time : ");
     tasktoAdd.description = readlineSync.question("Description : ");
+    
     fetch(URL + "tasks", {
         method:'POST',
         body : JSON.stringify(tasktoAdd),
@@ -52,7 +46,7 @@ function createTask(){
         }
     }).then(console.log("Task Added"))
       .catch(err => {
-        console.log("Error" , err)
+        console.log("Error at creating a task - please check again" , err)
     })
 }
 
@@ -66,7 +60,7 @@ function closeTask(){
         }
     }).then(console.log("Closed Task"))
       .catch(err => {
-        console.log("Error" , err)
+        console.log("Error at closing a task - please check again" , err)
     })
     
 }
@@ -86,5 +80,49 @@ function deleteTask(){
 }
 
 
+function getProjects(){
+    fetch(URL + "projects" ,{
+        headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+    })
+      .then((res) => res.json())
+      .then((data) => console.table(data))
+      .catch(err => {
+          console.log("Error" , err)
+      })
+}
 
-module.exports = {getProjects, getActiveTasks,createTask,closeTask,deleteTask}
+
+function getProjectByID(){
+
+    let id = chooseID()
+    const URL1 = id==''?URL+`projects`:URL+`projects/${id}`;
+        fetch(URL1 ,{
+            headers: {
+                Authorization: `Bearer ${TOKEN}`,
+              },
+        })
+          .then((res) => res.json())
+          .then((data) => console.table(data))
+          .catch(err => {
+              console.log("Bad id :- check your input id again")
+          })
+    }
+
+function addTaskUnderProject(){
+     let projectID = chooseID()
+     createTask(parseInt(projectID));
+}
+
+function closeTaskUnderProject(){
+    let projectID = chooseID()
+    closeTask(parseInt(projectID));
+}
+
+function deleteTaskUnderProject(){
+    let projectID = chooseID()
+    deleteTask(parseInt(projectID));
+}
+module.exports = {getProjects, getProjectByID,addTaskUnderProject,closeTaskUnderProject,deleteTaskUnderProject,
+                 getActiveTasks,createTask,closeTask,deleteTask,}
