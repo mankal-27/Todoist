@@ -13,3 +13,11 @@ Features:
 - Create a new task. todoist add "Task content" <project_name>
 - Close a task. Same as before
 - Delete a task. Same as before.
+
+## Stage 3
+- Delete all closed tasks
+- Change the due date to tomorrow for all active tasks Procrastination FTW
+- Show all active tasks due today
+- Show overdue tasks
+- Create a subtask for a given task
+- Show all upcoming tasks for the next 7 days
