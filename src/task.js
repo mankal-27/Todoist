@@ -22,19 +22,20 @@ function chooseIDForTask(){
 function getActiveTasks() {
   let ids = [];
   let dataTable = ["id", "project_id", "content"];
-  fetch(URL + "tasks", {
+  
+  return fetch(URL + "tasks", {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
   })
     .then((res) => res.json())
-    .then((data) => {
-      console.table(data, dataTable);
-    })
+    .then((data) => { return data })
     .catch((err) => {
       console.log("Error at fetching task - please check ", err);
     });
 }
+
+
 
 function createTask(proj_id, task_id) {
   let tasktoAdd = {};
@@ -137,7 +138,7 @@ function addSubTask() {
 }
 
 function dueTask(){
-  let dueDate = readlineSync.question("Enter due date to check for")
+  let dueDate = readlineSync.question("Enter due date to check for : ")
   fetch(URL + `tasks?filter=${dueDate}`, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
@@ -145,6 +146,45 @@ function dueTask(){
   }).then(res => res.json())
     .then(data => console.table(data));
 }
+
+async function getIds(){
+    let result1 = await getActiveTasks()
+    let idArray = [];
+    for(let i = 0 ; i< result1.length ; i++){
+      idArray.push(result1[i].id);
+    }
+    return idArray;
+}
+
+async function updateDueDate(){
+  let getid = await getIds();
+  for(let i = 0 ; i< getid.length ; i++){
+  
+    fetch(URL + "tasks/" + getid[i], {
+      method: "POST",
+      body: JSON.stringify({"due_string" : "tomorrow"}),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN}`,
+      }
+    })
+  }
+}
+
+async function deleteAllTask(){
+  let getid = await getIds();
+  for(let i = 0 ; i< getid.length ; i++){
+
+    fetch(URL + "tasks/" + getid[i], {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN}`,
+      }
+    })
+  }
+}
+
 
 module.exports = {
   getProjects,
@@ -158,4 +198,6 @@ module.exports = {
   deleteTask,
   addSubTask,
   dueTask,
+  updateDueDate,
+  deleteAllTask,
 };
