@@ -1,18 +1,26 @@
 const fetch = require("node-fetch");
 const dotenv = require("dotenv").config();
 const yargs = require("yargs");
+const promise = require("fs/promises");
 const readlineSync = require("readline-sync");
+const { allLimit } = require("async");
 
 const TOKEN = process.env.TOKEN;
 const URL = "https://api.todoist.com/rest/v1/";
 
 // function for passing id
-function chooseID() {
-  let chooseID = readlineSync.question("Add id : ");
+function chooseIDForProject() {
+  let chooseID = readlineSync.question("Add Id for project : ");
+  return chooseID;
+}
+
+function chooseIDForTask(){
+  let chooseID = readlineSync.question("Add Id for task : ");
   return chooseID;
 }
 
 function getActiveTasks() {
+  let ids = [];
   let dataTable = ["id", "project_id", "content"];
   fetch(URL + "tasks", {
     headers: {
@@ -20,16 +28,19 @@ function getActiveTasks() {
     },
   })
     .then((res) => res.json())
-    .then((data) => console.table(data, dataTable))
+    .then((data) => {
+      console.table(data, dataTable);
+    })
     .catch((err) => {
       console.log("Error at fetching task - please check ", err);
     });
 }
 
-function createTask(id) {
+function createTask(proj_id, task_id) {
   let tasktoAdd = {};
 
-  tasktoAdd.project_id = id;
+  tasktoAdd.project_id = proj_id;
+  tasktoAdd.parent_id = task_id;
   tasktoAdd.content = readlineSync.question("Content : ");
   tasktoAdd.due_string = readlineSync.question("Time : ");
   tasktoAdd.description = readlineSync.question("Description : ");
@@ -90,7 +101,7 @@ function getProjects() {
 }
 
 function getProjectByID() {
-  let id = chooseID();
+  let id = chooseIDForProject();
   const URL1 = id == "" ? URL + `projects` : URL + `projects/${id}`;
   fetch(URL1, {
     headers: {
@@ -105,19 +116,36 @@ function getProjectByID() {
 }
 
 function addTaskUnderProject() {
-  let projectID = chooseID();
+  let projectID = chooseIDForProject();
   createTask(parseInt(projectID));
 }
 
 function closeTaskUnderProject() {
-  let projectID = chooseID();
+  let projectID = chooseIDForProject();
   closeTask(parseInt(projectID));
 }
 
 function deleteTaskUnderProject() {
-  let projectID = chooseID();
+  let projectID = chooseIDForProject();
   deleteTask(parseInt(projectID));
 }
+
+function addSubTask() {
+  let project_id = chooseIDForProject();
+  let task_id = chooseIDForTask();
+  createTask(parseInt(project_id), parseInt(task_id));
+}
+
+function dueTask(){
+  let dueDate = readlineSync.question("Enter due date to check for")
+  fetch(URL + `tasks?filter=${dueDate}`, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+    },
+  }).then(res => res.json())
+    .then(data => console.table(data));
+}
+
 module.exports = {
   getProjects,
   getProjectByID,
@@ -128,4 +156,6 @@ module.exports = {
   createTask,
   closeTask,
   deleteTask,
+  addSubTask,
+  dueTask,
 };
