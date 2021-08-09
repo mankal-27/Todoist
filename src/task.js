@@ -14,7 +14,7 @@ function chooseIDForProject() {
   return chooseID;
 }
 
-function chooseIDForTask(){
+function chooseIDForTask() {
   let chooseID = readlineSync.question("Add Id for task : ");
   return chooseID;
 }
@@ -22,20 +22,20 @@ function chooseIDForTask(){
 function getActiveTasks() {
   let ids = [];
   let dataTable = ["id", "project_id", "content"];
-  
+
   return fetch(URL + "tasks", {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
   })
     .then((res) => res.json())
-    .then((data) => { return data })
+    .then((data) => {
+      return data;
+    })
     .catch((err) => {
       console.log("Error at fetching task - please check ", err);
     });
 }
-
-
 
 function createTask(proj_id, task_id) {
   let tasktoAdd = {};
@@ -137,54 +137,52 @@ function addSubTask() {
   createTask(parseInt(project_id), parseInt(task_id));
 }
 
-function dueTask(){
-  let dueDate = readlineSync.question("Enter due date to check for : ")
+function dueTask() {
+  let dueDate = readlineSync.question("Enter due date to check for : ");
   fetch(URL + `tasks?filter=${dueDate}`, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
-  }).then(res => res.json())
-    .then(data => console.table(data));
+  })
+    .then((res) => res.json())
+    .then((data) => console.table(data));
 }
 
-async function getIds(){
-    let result1 = await getActiveTasks()
-    let idArray = [];
-    for(let i = 0 ; i< result1.length ; i++){
-      idArray.push(result1[i].id);
-    }
-    return idArray;
+async function getIds() {
+  let result1 = await getActiveTasks();
+  let idArray = [];
+  for (let i = 0; i < result1.length; i++) {
+    idArray.push(result1[i].id);
+  }
+  return idArray;
 }
 
-async function updateDueDate(){
+async function updateDueDate() {
   let getid = await getIds();
-  for(let i = 0 ; i< getid.length ; i++){
-  
+  for (let i = 0; i < getid.length; i++) {
     fetch(URL + "tasks/" + getid[i], {
       method: "POST",
-      body: JSON.stringify({"due_string" : "tomorrow"}),
+      body: JSON.stringify({ due_string: "tomorrow" }),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${TOKEN}`,
-      }
-    })
+      },
+    });
   }
 }
 
-async function deleteAllTask(){
+async function deleteAllTask() {
   let getid = await getIds();
-  for(let i = 0 ; i< getid.length ; i++){
-
+  for (let i = 0; i < getid.length; i++) {
     fetch(URL + "tasks/" + getid[i], {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${TOKEN}`,
-      }
-    })
+      },
+    });
   }
 }
-
 
 module.exports = {
   getProjects,
