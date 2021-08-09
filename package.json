@@ -24,6 +24,7 @@
     "nodemon": "^2.0.12"
   },
   "dependencies": {
+    "async": "^3.2.1",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.1",
     "readline-sync": "^1.4.10",

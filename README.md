@@ -1,3 +1,6 @@
+## .env File
+- Please go through .envSampleFile for neccessary changes to make this code run on your system.
+
 ## Stage 1
 
 Features:
