@@ -15,6 +15,8 @@ const {
   deleteTask,
   addSubTask,
   dueTask,
+  updateDueDate,
+  deleteAllTask,
 } = require("./task");
 
 const cmdControllerMapping = {
@@ -29,6 +31,8 @@ const cmdControllerMapping = {
   dlproj: deleteTaskUnderProject,
   addtsk : addSubTask,
   duetsk : dueTask,
+  update : updateDueDate,
+  delalltsk : deleteAllTask,
 };
 const argv = yargs
   .command("ls", "Fetch all the task available")
@@ -42,6 +46,8 @@ const argv = yargs
   .command("dlproj", "Delete Task under Project")
   .command("addtsk" , "Add a subtask under task")
   .command("duetsk" , "Show a list of due task based on your input like - Today, tomorrow, or any other future days")
+  .command("update" , "Update due date from today to tomorrow")
+  .command("delalltsk" , "Delete all active task")
   .argv;
 
 if (argv._[0] in cmdControllerMapping) {
